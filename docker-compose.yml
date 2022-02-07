@@ -1,0 +1,51 @@
+version: '3.2'
+
+services:
+
+  frontend:
+    build: frontend
+    ports:
+      - 20020:80
+    volumes:
+      # Re-use local composer cache via host-volume
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      # Mount source-code for development
+      - ./:/app
+
+  api:
+    build: api
+    ports:
+      - 20021:80
+    volumes:
+      # Re-use local composer cache via host-volume
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      # Mount source-code for development
+      - ./:/app
+
+  backend:
+    build: backend
+    ports:
+      - 20022:80
+    volumes:
+      # Re-use local composer cache via host-volume
+      - ~/.composer-docker/cache:/root/.composer/cache:delegated
+      # Mount source-code for development
+      - ./:/app
+
+  mysql:
+    image: mariadb:10.7
+    ports:
+      - 3306:3306
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_pwd
+      - MYSQL_DATABASE=shop
+      - MYSQL_USER=shop_user
+      - MYSQL_PASSWORD=shop_pwd
+    volumes:
+      - ${PWD}/static/mariadb:/var/lib/mysql
+
+  redis:
+    image: redis
+    container_name: redis
+    ports:
+      - 6379:6379
